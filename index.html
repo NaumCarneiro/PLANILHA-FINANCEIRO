@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<!-- VIEW: User Login -->
+<section id="view-login-user" class="view active">
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo"><i class="fa-solid fa-wallet"></i> FinanceFam</div>
+            <div style="display: flex; gap: 10px;">
+                <button id="btn-admin-access" class="icon-btn"><i class="fa-solid fa-lock"></i></button>
+                <button onclick="if(confirm('Resetar app?')) { localStorage.clear(); location.reload(); }"
+                    class="icon-btn" style="color: var(--danger);"><i class="fa-solid fa-power-off"></i></button>
+            </div>
+        </div>
+        <div class="login-card">
+            <h2>Bem-vindo de volta!</h2>
+            <p class="subtitle">Selecione seu perfil</p>
+            <div id="user-list-login" class="user-grid"></div>
+        </div>
+    </div>
+</section>
+
+<!-- VIEW: Admin Login -->
+<section id="view-login-admin" class="view hidden">
+    <div class="login-container">
+        <button id="btn-back-to-user-login" class="back-btn"><i class="fa-solid fa-arrow-left"></i>
+            Voltar</button>
+        <div class="login-card admin-card">
+            <div class="icon-header"><i class="fa-solid fa-user-shield"></i></div>
+            <h2>Área Administrativa</h2>
+            <form id="form-login-admin">
+                <div class="input-group">
+                    <label>Login</label>
+                    <input type="text" id="admin-login" required>
+                </div>
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" id="admin-password" required>
+                </div>
+                <button type="submit" class="btn-primary">Entrar</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- VIEW: Admin Dashboard -->
+<section id="view-admin-dashboard" class="view hidden">
+    <nav class="sidebar">
+        <div class="logo"><i class="fa-solid fa-wallet"></i> FinanceFam <span class="badge">Admin</span></div>
+        <ul class="nav-links">
+            <li class="active" data-tab="admin-users"><i class="fa-solid fa-users"></i> Usuários</li>
+            <li data-tab="admin-admins"><i class="fa-solid fa-user-shield"></i> Administradores</li>
+            <li data-tab="admin-logs"><i class="fa-solid fa-clock-rotate-left"></i> Histórico</li>
+        </ul>
+        <button id="btn-logout-admin" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i>
+            Sair</button>
+    </nav>
+    <main class="content">
+        <div id="tab-admin-users" class="tab-content active">
+            <header>
+                <h1>Gerenciar Usuários</h1>
+                <button id="btn-add-user" class="btn-primary"><i class="fa-solid fa-plus"></i> Novo
+                    Usuário</button>
+            </header>
+            <div class="card-list" id="list-users"></div>
+        </div>
+        <div id="tab-admin-admins" class="tab-content hidden">
+            <header>
+                <h1>Gerenciar Administradores</h1>
+                <button id="btn-add-admin" class="btn-primary"><i class="fa-solid fa-plus"></i> Novo
+                    Admin</button>
+            </header>
+            <div class="card-list" id="list-admins"></div>
+        </div>
+        <div id="tab-admin-logs" class="tab-content hidden">
+            <header>
+                <h1>Histórico de Ações</h1>
+            </header>
+            <div class="table-container">
+                <table id="table-logs">
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Ação</th>
+                            <th>Responsável</th>
+                            <th>Detalhes</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</section>
+
+<!-- VIEW: User Dashboard -->
+<section id="view-user-dashboard" class="view hidden">
+    <nav class="bottom-nav">
+        <button class="nav-item active" data-target="user-home"><i class="fa-solid fa-house"></i>
+            Início</button>
+        <button class="nav-item" data-target="user-transactions"><i class="fa-solid fa-list"></i>
+            Extrato</button>
+        <button class="nav-item fab" id="btn-new-transaction" onclick="UI.toggleModal('modal-add-transaction', true)"><i
+                class="fa-solid fa-plus"></i></button>
+        <button class="nav-item" data-target="user-goals"><i class="fa-solid fa-bullseye"></i> Metas</button>
+        <button class="nav-item" data-target="user-savings"><i class="fa-solid fa-piggy-bank"></i>
+            Cofre</button>
+    </nav>
+    <header class="user-header">
+        <div class="user-info">
+            <span class="greeting">Olá,</span>
+            <h2 id="user-name-display">Usuário</h2>
+        </div>
+        <div class="month-selector">
+            <button id="btn-prev-month"><i class="fa-solid fa-chevron-left"></i></button>
+            <span id="current-month-display">Novembro 2025</span>
+            <button id="btn-next-month"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+        <button id="btn-logout-user" class="icon-btn-small"><i class="fa-solid fa-right-from-bracket"></i></button>
+    </header>
+    <main class="user-content">
+        <div id="user-home" class="subview active">
+            <div class="summary-cards">
+                <div class="card summary income">
+                    <div class="icon"><i class="fa-solid fa-arrow-up"></i></div>
+                    <div class="info"><span>Entradas</span>
+                        <h3 id="summary-income">R$ 0,00</h3>
+                    </div>
+                </div>
+                <div class="card summary expense">
+                    <div class="icon"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="info"><span>Saídas</span>
+                        <h3 id="summary-expense">R$ 0,00</h3>
+                    </div>
+                </div>
+                <div class="card summary balance">
+                    <div class="icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                    <div class="info"><span>Saldo</span>
+                        <h3 id="summary-balance">R$ 0,00</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <h3>Gastos por Categoria</h3>
+                <canvas id="chart-expenses"></canvas>
+            </div>
+        </div>
+        <div id="user-transactions" class="subview hidden">
+            <h3>Extrato Mensal</h3>
+            <div id="transaction-list" class="transaction-list"></div>
+        </div>
+        <div id="user-goals" class="subview hidden">
+            <header class="subview-header">
+                <h3>Minhas Metas</h3>
+                <button id="btn-add-goal" class="btn-small">Nova Meta</button>
+            </header>
+            <div id="goals-list" class="goals-list"></div>
+        </div>
+        <div id="user-savings" class="subview hidden">
+            <div class="savings-card">
+                <i class="fa-solid fa-piggy-bank big-icon"></i>
+                <h3>Total Guardado</h3>
+                <h1 id="savings-total">R$ 0,00</h1>
+                <div class="savings-actions">
+                    <button id="btn-savings-deposit" class="btn-action">Guardar</button>
+                    <button id="btn-savings-withdraw" class="btn-action outline">Resgatar</button>
+                </div>
+            </div>
+            <div class="savings-history">
+                <h4>Histórico</h4>
+                <ul id="savings-history-list"></ul>
+            </div>
+        </div>
+    </main>
+</section>
+
+<!-- Modals -->
+<div id="modal-overlay" class="modal-overlay hidden">
+    <!-- Modal: Add User -->
+    <div id="modal-add-user" class="modal hidden">
+        <div class="modal-header">
+            <h3>Novo Usuário</h3>
+            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="form-add-user">
+                <div class="input-group">
+                    <label>Nome</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="input-group">
+                    <label>Membro da Família</label>
+                    <select name="role" required>
+                        <option value="Pai">Pai</option>
+                        <option value="Mãe">Mãe</option>
+                        <option value="Filho">Filho</option>
+                        <option value="Filha">Filha</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Criar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Add Transaction -->
+    <div id="modal-add-transaction" class="modal hidden">
+        <div class="modal-header">
+            <h3>Novo Lançamento</h3>
+            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="form-add-transaction">
+                <div class="type-toggle">
+                    <input type="radio" name="type" id="type-expense" value="expense" checked>
+                    <label for="type-expense">Gasto</label>
+                    <input type="radio" name="type" id="type-income" value="income">
+                    <label for="type-income">Renda</label>
+                </div>
+                <div class="input-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" name="amount" step="0.01" required>
+                </div>
+                <div class="input-group">
+                    <label>Categoria</label>
+                    <select name="category" id="transaction-category">
+                        <option value="Alimentação">Alimentação</option>
+                        <option value="Medicamentos">Medicamentos</option>
+                        <option value="Combustível">Combustível</option>
+                        <option value="Lazer">Lazer</option>
+                        <option value="Contas Fixas">Contas Fixas</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Descrição</label>
+                    <input type="text" name="description" placeholder="Ex: Mercado Semanal">
+                </div>
+                <div class="row">
+                    <div class="input-group">
+                        <label>Data</label>
+                        <input type="date" name="date">
+                    </div>
+                    <div class="input-group">
+                        <label>Hora</label>
+                        <input type="time" name="time">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Recorrência</label>
+                    <select name="recurrence">
+                        <option value="none">Não se repete</option>
+                        <option value="2">2 Meses</option>
+                        <option value="3">3 Meses</option>
+                        <option value="6">6 Meses</option>
+                        <option value="12">12 Meses</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Recibo (Opcional)</label>
+                    <input type="file" name="receipt" accept="image/*">
+                </div>
+                <button type="submit" class="btn-primary">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Add Goal -->
+    <div id="modal-add-goal" class="modal hidden">
+        <div class="modal-header">
+            <h3>Nova Meta</h3>
+            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="form-add-goal">
+                <div class="input-group">
+                    <label>Título da Meta</label>
+                    <input type="text" name="title" placeholder="Ex: Viagem Férias" required>
+                </div>
+                <div class="input-group">
+                    <label>Valor Alvo (R$)</label>
+                    <input type="number" name="targetAmount" step="0.01" required>
+                </div>
+                <button type="submit" class="btn-primary">Criar Meta</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Goal Action -->
+    <div id="modal-goal-action" class="modal hidden">
+        <div class="modal-header">
+            <h3 id="goal-modal-title">Movimentar Meta</h3>
+            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="form-goal-action">
+                <input type="hidden" name="goalId" id="goal-action-id">
+                <input type="hidden" name="type" id="goal-action-type">
+                <div class="input-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" name="amount" step="0.01" required>
+                </div>
+                <div class="input-group">
+                    <label>Observação (Opcional)</label>
+                    <textarea name="observation" rows="2" placeholder="Ex: Depósito mensal..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Confirmar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Savings Action -->
+    <div id="modal-savings-action" class="modal hidden">
+        <div class="modal-header">
+            <h3 id="savings-modal-title">Movimentar Cofre</h3>
+            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="form-savings-action">
+                <input type="hidden" name="type" id="savings-action-type">
+                <div class="input-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" name="amount" step="0.01" required>
+                </div>
+                <div class="input-group">
+                    <label>Observação (Opcional)</label>
+                    <textarea name="observation" rows="2" placeholder="Ex: Resgate para emergência..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Confirmar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: View History Detail -->
+    <div id="modal-view-history-detail" class="modal hidden">
+        <div class="modal-header">
+            <h3>Detalhes da Movimentação</h3>
+            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="detail-row"><strong>Data/Hora:</strong> <span id="detail-date"></span></div>
+            <div class="detail-row"><strong>Usuário:</strong> <span id="detail-user"></span></div>
+            <div class="detail-row"><strong>Tipo:</strong> <span id="detail-type"></span></div>
+            <div class="detail-row"><strong>Valor:</strong> <span id="detail-amount"></span></div>
+            <div class="detail-row">
+                <strong>Observação:</strong>
+                <p id="detail-observation"
+                    style="background: var(--bg-input); padding: 0.5rem; border-radius: 4px; margin-top: 0.25rem; min-height: 40px;">
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: View Goal History -->
+    <div id="modal-view-goal-history" class="modal hidden">
+        <div class="modal-header">
+            <h3 id="goal-history-title">Histórico da Meta</h3>
+            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <ul id="goal-history-list" style="list-style: none; padding: 0;"></ul>
+        </div>
+    </div>
+
+    <!-- Modal: View Receipt -->
+    <div id="modal-view-receipt" class="modal hidden">
+        <div class="modal-header">
+            <h3>Comprovante</h3>
+            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body" style="text-align: center;">
+            <img id="receipt-image" src="" alt="Recibo" style="max-width: 100%; max-height: 70vh; border-radius: 8px;">
+        </div>
+    </div>
+</div>
+</div>
+
+<script src="js/db.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/app.js"></script>
+</body>
+
+</html>
